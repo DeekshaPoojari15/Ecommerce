@@ -5,11 +5,13 @@ const env = require('./config/env');
 const app = express();
 
 // Middleware
+// CORS: Allow frontend to make requests
 app.use(cors({
   origin: env.CORS_ORIGIN,
   credentials: true,
 }));
 
+// JSON body parser: Convert request body to JSON
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -23,8 +25,8 @@ app.use('/api/auth', require('./routes/auth.routes'));
 app.use('/api/products', require('./routes/products.routes'));
 app.use('/api/orders', require('./routes/orders.routes'));
 app.use('/api/cart', require('./routes/cart.routes'));
-app.use('/api/recommendations', require('./routes/recommendations.routes'));
-app.use('/api/chat', require('./routes/chat.routes'));
+// app.use('/api/recommendations', require('./routes/recommendations.routes'));
+// app.use('/api/chat', require('./routes/chat.routes'));
 // app.use('/api/users', require('./routes/users.routes'));
 
 // Error handling middleware

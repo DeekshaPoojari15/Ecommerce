@@ -1,6 +1,6 @@
-const app = require('./app');
-const connectDB = require('./config/db');
-const env = require('./config/env');
+const app = require('./app'); // Import Express app setup
+const connectDB = require('./config/db');  // Import MongoDB connection
+const env = require('./config/env');// Import configuration
 
 // Connect to MongoDB
 connectDB();

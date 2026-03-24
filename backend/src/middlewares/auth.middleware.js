@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const env = require('../config/env');
 
 const authMiddleware = (req, res, next) => {
+  // Checks if user has valid JWT token before allowing access to protected routes.
   try {
     const token = req.headers.authorization?.split(' ')[1]; // Extract "Bearer token"
 
