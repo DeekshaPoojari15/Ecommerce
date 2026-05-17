@@ -1,0 +1,157 @@
+.products-container {
+  padding: 40px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2rem;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.product-card {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 10px var(--shadow);
+  transition: transform 0.2s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+}
+
+.product-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.product-image-wrap {
+  position: relative;
+}
+
+.product-thumbs {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.product-thumbs .thumb {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 4px;
+  opacity: 0.8;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.product-thumbs .thumb.active {
+  opacity: 1;
+  border-color: var(--primary);
+}
+
+.price {
+  color: var(--primary);
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  height: 50px;
+  overflow: hidden;
+}
+
+.btn {
+  margin-top: 8px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.btn:hover {
+  background: #4b5563;
+}
+
+.cart-controls {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 8px;
+  background: var(--surface-muted);
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 2px solid var(--primary);
+}
+
+.qty-minus, .qty-plus, .qty-delete {
+  background: var(--primary);
+  color: white;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qty-minus:hover, .qty-plus:hover {
+  background: #4b5563;
+}
+
+.qty-delete {
+  background: var(--accent);
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+  padding: 0;
+}
+
+.qty-delete:hover {
+  background: #4b5563;
+}
+
+.qty-display {
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 16px;
+  min-width: 30px;
+  text-align: center;
+}
+
+.status {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.status.info {
+  color: var(--text-muted);
+  margin-top: 1rem;
+}
+
+.error {
+  color: var(--accent);
+}
