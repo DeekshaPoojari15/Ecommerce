@@ -89,8 +89,10 @@ const createOrder = async (req, res) => {
       });
     }
 
-    // Calculate total price
+    // Calculate total price and include item price data
     let totalPrice = 0;
+    const orderItems = [];
+
     for (const item of items) {
       const product = await Product.findById(item.product);
       if (!product) {
@@ -99,12 +101,20 @@ const createOrder = async (req, res) => {
           message: `Product ${item.product} not found`,
         });
       }
-      totalPrice += product.price * item.quantity;
+
+      const itemPrice = product.price;
+      totalPrice += itemPrice * item.quantity;
+
+      orderItems.push({
+        product: item.product,
+        quantity: item.quantity,
+        price: itemPrice,
+      });
     }
 
     const order = await Order.create({
       user: req.user.id,
-      items,
+      items: orderItems,
       totalPrice,
       shippingAddress,
     });

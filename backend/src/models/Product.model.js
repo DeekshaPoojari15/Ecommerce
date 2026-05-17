@@ -25,6 +25,7 @@ const productSchema = new mongoose.Schema({
     required: [true, 'Please provide stock quantity'],
     min: 0,
     default: 0,
+    alias: 'countInStock',
   },
   rating: {
     type: Number,

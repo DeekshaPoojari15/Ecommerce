@@ -41,10 +41,11 @@ const addToCart = async (req, res) => {
       });
     }
 
-    if (product.stock < quantity) {
+    const availableStock = product.stock ?? product.countInStock ?? product._doc?.countInStock ?? 0;
+    if (availableStock < quantity) {
       return res.status(400).json({
         success: false,
-        message: 'Insufficient stock',
+        message: `Insufficient stock (available: ${availableStock})`,
       });
     }
 
@@ -67,7 +68,7 @@ const addToCart = async (req, res) => {
         existingItem.quantity += quantity;
 
         // Check stock again
-        if (product.stock < existingItem.quantity) {
+        if (availableStock < existingItem.quantity) {
           return res.status(400).json({
             success: false,
             message: 'Insufficient stock for requested quantity',
@@ -122,10 +123,11 @@ const updateCartItem = async (req, res) => {
       });
     }
 
-    if (product.stock < quantity) {
+    const availableStock = product.stock ?? product.countInStock ?? product._doc?.countInStock ?? 0;
+    if (availableStock < quantity) {
       return res.status(400).json({
         success: false,
-        message: 'Insufficient stock',
+        message: `Insufficient stock (available: ${availableStock})`,
       });
     }
 
