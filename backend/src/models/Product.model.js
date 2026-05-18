@@ -1,54 +1,117 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const productSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'Please provide product name'],
-    trim: true,
-  },
-  description: {
-    type: String,
-    required: [true, 'Please provide product description'],
-  },
-  price: {
-    type: Number,
-    required: [true, 'Please provide product price'],
-    min: 0,
-  },
-  category: {
-    type: String,
-    enum: ['Electronics', 'Clothing', 'Books', 'Home', 'Sports', 'Other'],
-    default: 'Other',
-  },
-  stock: {
-    type: Number,
-    required: [true, 'Please provide stock quantity'],
-    min: 0,
-    default: 0,
-    alias: 'countInStock',
-  },
-  rating: {
-    type: Number,
-    default: 0,
-    min: 0,
-    max: 5,
-  },
-  reviews: {
-    type: Number,
-    default: 0,
-  },
-  image: {
-    type: String, // URL to product image
-  },
-  tags: [String],
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+const specificationSchema = new mongoose.Schema(
+  {},
+  { strict: false, _id: false }
+);
 
-module.exports = mongoose.model('Product', productSchema);
+const productSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, "Please provide product name"],
+      trim: true,
+    },
+
+    sku: {
+      type: String,
+      required: [true, "Please provide product SKU"],
+      unique: true,
+      trim: true,
+    },
+
+    description: {
+      type: String,
+      required: [true, "Please provide product description"],
+      trim: true,
+    },
+
+    longDescription: {
+      type: String,
+      required: [true, "Please provide long description"],
+    },
+
+    price: {
+      type: Number,
+      required: [true, "Please provide product price"],
+      min: 0,
+    },
+
+    category: {
+      type: String,
+      required: true,
+      enum: [
+        "Electronics",
+        "Accessories",
+        "Wearables",
+        "Audio",
+        "Photography",
+        "Fashion",
+        "Furniture",
+        "Vehicles",
+        "Home Appliances",
+        "Other",
+      ],
+      default: "Other",
+    },
+
+    specifications: {
+      type: specificationSchema,
+      default: {},
+    },
+
+    images: [
+      {
+        type: String,
+        required: true,
+      },
+    ],
+
+    stock: {
+      type: Number,
+      required: [true, "Please provide stock quantity"],
+      min: 0,
+      default: 0,
+    },
+
+    countInStock: {
+      type: Number,
+      min: 0,
+      default: 0,
+    },
+
+    rating: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 5,
+    },
+
+    numReviews: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
+    tags: [
+      {
+        type: String,
+      },
+    ],
+
+    isFeatured: {
+      type: Boolean,
+      default: false,
+    },
+
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+module.exports = mongoose.model("Product", productSchema);

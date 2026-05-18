@@ -3,7 +3,7 @@ require('dotenv').config();
 module.exports = {
   PORT: process.env.PORT || 5000,
   NODE_ENV: process.env.NODE_ENV || 'development',
-  MONGO_URI: process.env.MONGO_URI || 'mongodb://localhost:27017/ecommerce',
+  MONGO_URI: process.env.MONGO_URI || 'mongodb+srv://deeksha_db_user:DeekshaEcommerce@cluster0.iikpymg.mongodb.net/?appName=Cluster0',
   JWT_SECRET: process.env.JWT_SECRET || 'default_secret_key',
   JWT_EXPIRE: process.env.JWT_EXPIRE || '7d',
   CORS_ORIGIN: process.env.CORS_ORIGIN || 'http://localhost:3000',
