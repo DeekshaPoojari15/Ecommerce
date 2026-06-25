@@ -24,7 +24,13 @@ const Login = () => {
       });
 
       const { token, user } = response.data.data;
+      console.log(user);
+      localStorage.setItem("user", user)
       login({ token, user });
+      if(user.role === "admin") {
+        navigate('/admin');
+        return;
+      }
       navigate('/products');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please try again.');

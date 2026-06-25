@@ -10,7 +10,6 @@ const HomePage = () => {
         <p>Shop smart. Ship fast. Save big.</p>
         <Link to="/products" className="browse-button">Browse Products</Link>
       </div>
-
       <section className="features">
         <div className="feature-card">
           <h3>Top Quality</h3>

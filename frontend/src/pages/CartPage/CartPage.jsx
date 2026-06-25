@@ -24,6 +24,7 @@ const CartPage = () => {
   }, [token]);
 
   const getImages = (product) => {
+    if (!product) return Array.from({ length: 5 }).map((_, i) => `https://picsum.photos/seed/unknown-${i + 1}/500/500`);
     if (product.images && product.images.length) return product.images.slice(0, 5);
     return Array.from({ length: 5 }).map((_, i) => `https://picsum.photos/seed/${product._id}-${i + 1}/500/500`);
   };
@@ -39,7 +40,7 @@ const CartPage = () => {
       setError('');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load cart');
-      setCart(null);
+      setCart({ items: [], totalPrice: 0 });
     } finally {
       setLoading(false);
     }
@@ -146,7 +147,8 @@ const CartPage = () => {
   if (loading) return <h2 className="status">Loading cart...</h2>;
   if (error) return <h2 className="status error">⚠️ {error}</h2>;
 
-  const totalPrice = cart?.totalPrice || (cart?.items?.reduce((total, item) => total + item.product.price * item.quantity, 0) || 0);
+  const cartItems = cart?.items || [];
+  const totalPrice = cart?.totalPrice ?? cartItems.reduce((total, item) => total + ((item.product?.price || 0) * item.quantity), 0);
 
   return (
     <div className="cart-container">
@@ -171,63 +173,74 @@ const CartPage = () => {
           <div className="cart-items-section">
             <h2>Items in Cart ({cart.items.length})</h2>
             <div className="cart-items">
-              {cart.items.map((item) => (
-                <div className="cart-item" key={item.product._id} onClick={() => navigate(`/product/${item.product._id}`)} style={{ cursor: 'pointer' }}>
-                  <div className="item-image-wrapper">
-                    <img
-                      src={getImages(item.product)[0]}
-                      alt={item.product.name}
-                      className="item-image"
-                      onError={(e) => {
-                        e.currentTarget.src = `https://picsum.photos/seed/${item.product._id}/150/150`;
-                      }}
-                    />
-                  </div>
+              {cartItems.map((item, index) => {
+                const product = item.product || {};
+                const itemTotal = (product.price || 0) * item.quantity;
 
-                  <div className="item-details">
-                    <h3 className="item-name">{item.product.name}</h3>
-                    <p className="item-category">{item.product.category}</p>
-                    <p className="item-price">₹{item.product.price}</p>
-                    {item.product.stock && <p className="item-stock">Stock: {item.product.stock}</p>}
-                  </div>
+                return (
+                  <div
+                    className="cart-item"
+                    key={product._id || index}
+                    onClick={() => product._id && navigate(`/product/${product._id}`)}
+                    style={{ cursor: product._id ? 'pointer' : 'default' }}
+                  >
+                    <div className="item-image-wrapper">
+                      <img
+                        src={getImages(product)[0]}
+                        alt={product.name || 'Product image'}
+                        className="item-image"
+                        onError={(e) => {
+                          e.currentTarget.src = `https://picsum.photos/seed/${product._id || 'unknown'}/150/150`;
+                        }}
+                      />
+                    </div>
 
-                  <div className="quantity-control" onClick={(e) => e.stopPropagation()}>
-                    <button
-                      type="button"
-                      className="qty-btn"
-                      onClick={() => handleQuantityChange(item.product._id, item.quantity - 1)}
-                      disabled={item.quantity <= 1}
-                    >
-                      −
+                    <div className="item-details">
+                      <h3 className="item-name">{product.name || 'Unknown product'}</h3>
+                      <p className="item-category">{product.category || 'Unknown category'}</p>
+                      <p className="item-price">₹{product.price?.toFixed(2) || '0.00'}</p>
+                      {product.stock != null && <p className="item-stock">Stock: {product.stock}</p>}
+                    </div>
+
+                    <div className="quantity-control" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        type="button"
+                        className="qty-btn"
+                        onClick={() => handleQuantityChange(product._id, item.quantity - 1)}
+                        disabled={item.quantity <= 1 || !product._id}
+                      >
+                        −
+                      </button>
+                      <input
+                        type="number"
+                        className="qty-input"
+                        value={item.quantity}
+                        onChange={(e) => {
+                          const val = parseInt(e.target.value) || 1;
+                          if (val > 0 && product._id) handleQuantityChange(product._id, val);
+                        }}
+                        min="1"
+                      />
+                      <button
+                        type="button"
+                        className="qty-btn"
+                        onClick={() => handleQuantityChange(product._id, item.quantity + 1)}
+                        disabled={!product._id}
+                      >
+                        +
+                      </button>
+                    </div>
+
+                    <div className="item-subtotal">
+                      <p>₹{itemTotal.toFixed(2)}</p>
+                    </div>
+
+                    <button className="btn-remove" onClick={(e) => { e.stopPropagation(); if (product._id) handleRemove(product._id); }}>
+                      Remove
                     </button>
-                    <input
-                      type="number"
-                      className="qty-input"
-                      value={item.quantity}
-                      onChange={(e) => {
-                        const val = parseInt(e.target.value) || 1;
-                        if (val > 0) handleQuantityChange(item.product._id, val);
-                      }}
-                      min="1"
-                    />
-                    <button
-                      type="button"
-                      className="qty-btn"
-                      onClick={() => handleQuantityChange(item.product._id, item.quantity + 1)}
-                    >
-                      +
-                    </button>
                   </div>
-
-                  <div className="item-subtotal">
-                    <p>₹{(item.product.price * item.quantity).toFixed(2)}</p>
-                  </div>
-
-                  <button className="btn-remove" onClick={(e) => { e.stopPropagation(); handleRemove(item.product._id); }}>
-                    Remove
-                  </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 

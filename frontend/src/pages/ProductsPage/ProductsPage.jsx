@@ -16,6 +16,7 @@ const ProductsPage = () => {
   const [previewIndex, setPreviewIndex] = useState({});
 
   const getImages = (product) => {
+    if (!product) return Array.from({ length: 5 }).map((_, i) => `https://picsum.photos/seed/unknown-${i + 1}/500/500`);
     if (product.images && product.images.length) return product.images.slice(0, 5);
     // generate up to 5 real images using picsum with product id seed
     return Array.from({ length: 5 }).map((_, i) => `https://picsum.photos/seed/${product._id}-${i + 1}/500/500`);
@@ -26,6 +27,7 @@ const ProductsPage = () => {
       try {
         const { data } = await axios.get("http://localhost:5000/api/products/");
         setProducts(data.data);
+        // console.log("Fetched products:", data.data);
       } catch (err) {
         setError(err.response?.data?.message || "Failed to load products");
       } finally {
@@ -120,7 +122,7 @@ const ProductsPage = () => {
   };
 
   const getCartItemQuantity = (productId) => {
-    const item = cart.find(item => item.product._id === productId);
+    const item = cart.find(item => item.product && item.product._id === productId);
     return item ? item.quantity : 0;
   };
 
@@ -133,14 +135,23 @@ const ProductsPage = () => {
       {message && <p className="status info">{message}</p>}
 
       <div className="products-grid">
-        {products.map((product) => {
+        {products.filter(p => p && p._id).map((product) => {
           const images = getImages(product);
           const active = previewIndex[product._id] ?? 0;
           return (
             <div className="product-card" key={product._id}>
               <div className="product-image-wrap">
                   <Link to={`/product/${product._id}`}>
-                    <img src={images[active]} alt={product.name} className="product-image" />
+                    <img
+                      src={images[active]}
+                      alt={product.name}
+                      className="product-image"
+                      loading="lazy"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = `https://picsum.photos/500/500?random=${Math.floor(Math.random()*1000)}`;
+                      }}
+                    />
                   </Link>
                   <div className="product-thumbs">
                   {images.map((img, idx) => (
@@ -149,6 +160,11 @@ const ProductsPage = () => {
                       src={img}
                       alt={`${product.name}-${idx}`}
                       className={`thumb ${idx === active ? 'active' : ''}`}
+                      loading="lazy"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = `https://picsum.photos/100/100?random=${Math.floor(Math.random()*1000)}`;
+                      }}
                       onMouseEnter={() => setPreviewIndex((s) => ({ ...s, [product._id]: idx }))}
                       onClick={() => setPreviewIndex((s) => ({ ...s, [product._id]: idx }))}
                     />

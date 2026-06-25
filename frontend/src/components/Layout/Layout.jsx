@@ -4,11 +4,13 @@ import axios from 'axios';
 import { AuthContext } from '../../contexts/AuthContext';
 import { CartContext } from '../../contexts/CartContext';
 import './Layout.css';
+import Chatbot from '../Chatbot/Chatbot';
 
 const Layout = ({ children }) => {
   const { isAuthenticated, user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const { count: cartCount } = useContext(CartContext);
+ const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -44,7 +46,12 @@ const Layout = ({ children }) => {
           )}
         </nav>
       </header>
-      <main className="layout-content">{children}</main>
+      <main className="layout-content">
+        {children}
+
+         
+        <Chatbot/>
+        </main>
       <footer className="layout-footer">&copy; {new Date().getFullYear()} Ecommerce</footer>
     </div>
   );

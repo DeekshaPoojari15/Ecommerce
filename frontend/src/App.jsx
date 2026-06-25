@@ -9,48 +9,79 @@ import OrdersPage from './pages/OrdersPage/OrdersPage';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+import AdminRoute from './components/AdminRoute/AdminRoute';
+import AdminPage from './admin/AdminPage/AdminPage';
+
 
 const App = () => (
-  <Layout>
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route
-        path="/products"
-        element={
-          <ProtectedRoute>
-            <ProductsPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/product/:id"
-        element={
-          <ProtectedRoute>
-            <ProductPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/cart"
-        element={
-          <ProtectedRoute>
-            <CartPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/orders"
-        element={
-          <ProtectedRoute>
-            <OrdersPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
-  </Layout>
+  <Routes>
+
+    {/* Admin Route Outside Layout */}
+    <Route
+      path="/admin/*"
+      element={
+        <AdminRoute>
+          <AdminPage />
+        </AdminRoute>
+      }
+    />
+
+    {/* User Layout Routes */}
+    <Route
+      path="/*"
+      element={
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Home />} />
+
+            <Route
+              path="/products"
+              element={
+                <ProtectedRoute>
+                  <ProductsPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/product/:id"
+              element={
+                <ProtectedRoute>
+                  <ProductPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/cart"
+              element={
+                <ProtectedRoute>
+                  <CartPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/orders"
+              element={
+                <ProtectedRoute>
+                  <OrdersPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+
+            <Route
+              path="*"
+              element={<Navigate to="/" replace />}
+            />
+          </Routes>
+        </Layout>
+      }
+    />
+  </Routes>
 );
 
 export default App;

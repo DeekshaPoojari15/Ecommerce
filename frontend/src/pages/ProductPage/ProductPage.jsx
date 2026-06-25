@@ -19,6 +19,7 @@ const ProductPage = () => {
       try {
         const { data } = await axios.get(`http://localhost:5000/api/products/${id}`);
         setProduct(data.data);
+        console.log('Fetched product:', data.data);
       } catch (err) {
         setError(err.response?.data?.message || 'Product not found');
       } finally {
@@ -48,7 +49,7 @@ const ProductPage = () => {
   }, [token]);
 
   const getImages = (product) => {
-    if (!product) return [];
+    if (!product) return Array.from({ length: 5 }).map((_, i) => `https://picsum.photos/seed/unknown-${i+1}/800/800`);
     if (product.images && product.images.length) return product.images.slice(0,5);
     return Array.from({ length: 5 }).map((_, i) => `https://picsum.photos/seed/${product._id}-${i+1}/800/800`);
   };
@@ -67,14 +68,13 @@ const ProductPage = () => {
     return [
       { label: 'Category', value: product.category },
       { label: 'Stock Available', value: `${product.stock} units` },
-      { label: 'Rating', value: `${product.rating}/5 (${product.reviews} reviews)` },
-      { label: 'SKU', value: product.sku || 'N/A' },
+      { label: 'Rating', value: `${product.rating}/5 (${product.numReviews} reviews)` },
       { label: 'Tags', value: product.tags?.join(', ') || 'None' },
     ];
   };
 
   const getCartItemQuantity = () => {
-    const item = cart.find((entry) => entry.product._id === product?._id);
+    const item = cart.find((entry) => entry.product && entry.product._id === product?._id);
     return item ? item.quantity : 0;
   };
 
@@ -137,13 +137,34 @@ const ProductPage = () => {
       <div className="gallery">
         <div className="image-container">
           <button className="nav-arrow prev" onClick={handlePrevImage}>❮</button>
-          <img src={images[active]} alt={product.name} className="main-image" />
+          <img
+            src={images[active]}
+            alt={product.name}
+            className="main-image"
+            loading="lazy"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = `https://picsum.photos/800/800?random=${Math.floor(Math.random() * 1000)}`;
+            }}
+          />
           <button className="nav-arrow next" onClick={handleNextImage}>❯</button>
           <span className="image-counter">{active + 1}/{images.length}</span>
         </div>
         <div className="thumbs">
           {images.map((img, idx) => (
-            <img key={idx} src={img} className={`thumb ${idx===active?'active':''}`} onMouseEnter={() => setActive(idx)} onClick={() => setActive(idx)} alt={`${product.name}-${idx}`} />
+            <img
+              key={idx}
+              src={img}
+              className={`thumb ${idx===active?'active':''}`}
+              onMouseEnter={() => setActive(idx)}
+              onClick={() => setActive(idx)}
+              alt={`${product.name}-${idx}`}
+              loading="lazy"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = `https://picsum.photos/100/100?random=${Math.floor(Math.random() * 1000)}`;
+              }}
+            />
           ))}
         </div>
       </div>
@@ -156,15 +177,14 @@ const ProductPage = () => {
         <div className="description-section">
           <h2>Description</h2>
           <p className="desc">{product.description}</p>
-          <p className="extended-desc">This premium product is carefully crafted with attention to detail and quality. Each unit undergoes rigorous quality control to ensure it meets our high standards. Whether you're a beginner or an experienced user, this product offers excellent value for money.</p>
-          <p className="features-title"><strong>Key Features:</strong></p>
-          <ul className="features-list">
-            <li>High-quality materials and durable construction</li>
-            <li>Easy to use and maintain</li>
-            <li>Exceptional performance and reliability</li>
-            <li>Comprehensive warranty support</li>
-            <li>Professional-grade design</li>
-          </ul>
+          <p className="desc">{product.longDescription}</p>
+           {Object.entries(product.specifications).map(
+    ([key, value]) => (
+      <ul key={key} mb={1}>
+        <strong>{key}:</strong> {String(value)}
+      </ul>
+    )
+  )}
         </div>
 
         <div className="specs-section">

@@ -12,6 +12,7 @@ const OrdersPage = () => {
   const [error, setError] = useState("");
 
   const getOrderImages = (product) => {
+    if (!product) return Array.from({ length: 5 }).map((_, i) => `https://picsum.photos/seed/unknown-${i + 1}/500/500`);
     if (product.images && product.images.length) return product.images.slice(0, 5);
     return Array.from({ length: 5 }).map((_, i) => `https://picsum.photos/seed/${product._id}-${i + 1}/500/500`);
   };
@@ -25,7 +26,7 @@ const OrdersPage = () => {
           },
         });
 
-        setOrders(data.data);
+        setOrders(data.data || []);
       } catch (err) {
         setError(err.response?.data?.message || "Failed to load orders");
       } finally {
@@ -55,37 +56,44 @@ const OrdersPage = () => {
             <div className="order-card" key={order._id}>
               <div className="order-header">
                 <div>
-                  <h3>Order #{order._id.slice(-8)}</h3>
-                  <p className="order-date">📅 {new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                  <h3>Order #{order._id?.slice(-8) || 'Unknown'}</h3>
+                  <p className="order-date">📅 {order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Unknown date'}</p>
                 </div>
                 <div className="order-badges">
-                  <span className={`badge status-${order.orderStatus.toLowerCase()}`}>{order.orderStatus}</span>
-                  <span className={`badge payment-${order.paymentStatus.toLowerCase()}`}>{order.paymentStatus}</span>
+                  <span className={`badge status-${(order.orderStatus || 'unknown').toLowerCase()}`}>{order.orderStatus || 'Unknown'}</span>
+                  <span className={`badge payment-${(order.paymentStatus || 'unknown').toLowerCase()}`}>{order.paymentStatus || 'Unknown'}</span>
                 </div>
               </div>
               <div className="order-summary">
-                <p className="order-total">💰 Total: <strong>₹{order.totalPrice}</strong></p>
+                <p className="order-total">💰 Total: <strong>₹{order.totalPrice?.toFixed(2) || '0.00'}</strong></p>
               </div>
 
               <div className="order-items-label">Items in Order</div>
               <div className="order-items">
-                {order.items.map((item, index) => (
-                  <div className="order-item" key={index} onClick={() => navigate(`/product/${item.product._id}`)}>
-                    <img
-                      src={getOrderImages(item.product)[0] || "https://via.placeholder.com/100"}
-                      alt={item.product.name}
-                      className="order-item-image"
-                      onError={(e) => {
-                        e.currentTarget.src = `https://picsum.photos/seed/${item.product._id}/150/150`;
-                      }}
-                    />
-                    <div className="order-item-info">
-                      <p className="order-item-name">{item.product.name}</p>
-                      <p className="order-item-details">Qty: {item.quantity} × ₹{item.price}</p>
+                {(order.items || []).map((item, index) => {
+                  const product = item.product || {};
+                  return (
+                    <div
+                      className="order-item"
+                      key={product._id || index}
+                      onClick={() => product._id && navigate(`/product/${product._id}`)}
+                    >
+                      <img
+                        src={getOrderImages(product)[0] || 'https://via.placeholder.com/100'}
+                        alt={product.name || 'Product image'}
+                        className="order-item-image"
+                        onError={(e) => {
+                          e.currentTarget.src = `https://picsum.photos/seed/${product._id || 'unknown'}/150/150`;
+                        }}
+                      />
+                      <div className="order-item-info">
+                        <p className="order-item-name">{product.name || 'Unknown product'}</p>
+                        <p className="order-item-details">Qty: {item.quantity} × ₹{item.price?.toFixed(2) || '0.00'}</p>
+                      </div>
+                      <div className="order-item-total">₹{((item.price || 0) * item.quantity).toFixed(2)}</div>
                     </div>
-                    <div className="order-item-total">₹{(item.price * item.quantity).toFixed(2)}</div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           ))}
