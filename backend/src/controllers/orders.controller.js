@@ -1,5 +1,7 @@
-const Order = require('../models/Order.model');
-const Product = require('../models/Product.model');
+// const Order = require('../models/Order.model');
+// const Product = require('../models/Product.model');
+import Order from "../models/Order.model.js";
+import Product from "../models/Product.model.js";
 
 // @desc    Get all orders
 // @route   GET /api/orders
@@ -166,7 +168,7 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   getOrders,
   getOrder,
   getMyOrders,

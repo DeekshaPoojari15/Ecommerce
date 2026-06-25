@@ -1,22 +1,29 @@
-const express = require('express');
-const {
-  getProducts,
+// const express = require('express');
+// const {
+//   getProducts,
+//   getProduct,
+//   createProduct,
+//   updateProduct,
+//   deleteProduct,
+// } = require('../controllers/products.controller');
+// const authMiddleware = require('../middlewares/auth.middleware');
+import express from "express";
+import { getProducts,
   getProduct,
   createProduct,
   updateProduct,
-  deleteProduct,
-} = require('../controllers/products.controller');
-const authMiddleware = require('../middlewares/auth.middleware');
+  deleteProduct,} from "../controllers/products.controller.js";
+import authMiddleware from "../middlewares/auth.middleware.js";
 
-const router = express.Router();
+const productsRoutes = express.Router();
 
 // Public routes
-router.get('/', getProducts);
-router.get('/:id', getProduct);
+productsRoutes.get('/', getProducts);
+productsRoutes.get('/:id', getProduct);
 
 // Protected routes (Admin only)
-router.post('/', authMiddleware, createProduct);
-router.put('/:id', authMiddleware, updateProduct);
-router.delete('/:id', authMiddleware, deleteProduct);
+productsRoutes.post('/', authMiddleware, createProduct);
+productsRoutes.put('/:id', authMiddleware, updateProduct);
+productsRoutes.delete('/:id', authMiddleware, deleteProduct);
 
-module.exports = router;
+export default productsRoutes;

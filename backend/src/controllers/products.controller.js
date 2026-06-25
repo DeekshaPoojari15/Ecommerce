@@ -1,4 +1,8 @@
-const Product = require('../models/Product.model');
+// const Product = require('../models/Product.model');
+import Product from '../models/Product.model.js';
+import { HfInference } from "@huggingface/inference";
+
+const hf = new HfInference(process.env.HF_TOKEN);
 
 // @desc    Get all products
 // @route   GET /api/products
@@ -33,6 +37,8 @@ const getProduct = async (req, res) => {
       });
     }
 
+    console.log("Retrieved product:", product);
+
     res.status(200).json({
       success: true,
       data: product,
@@ -50,7 +56,35 @@ const getProduct = async (req, res) => {
 // @access  Private/Admin
 const createProduct = async (req, res) => {
   try {
-    const product = await Product.create(req.body);
+    // const product = await Product.create(req.body);
+    const {
+      name,
+      description,
+      category,
+      price
+    } = req.body;
+
+    // Combine important fields
+    const embeddingText = `
+      ${name}
+      ${description}
+      ${category}
+      ${price}
+    `.trim();
+
+
+    // Generate embedding ONCE
+    const embedding = await hf.featureExtraction({
+      model: "sentence-transformers/all-MiniLM-L6-v2",
+      inputs: embeddingText,
+    });
+    // console.log("Generated embedding:", embedding);
+
+     // Save product + embedding
+    const product = await Product.create({
+      ...req.body,
+      embedding: Array.from(embedding),
+    });
 
     res.status(201).json({
       success: true,
@@ -69,9 +103,38 @@ const createProduct = async (req, res) => {
 // @access  Private/Admin
 const updateProduct = async (req, res) => {
   try {
+    // const product = await Product.create(req.body);
+    const {
+      name,
+      description,
+      category,
+      price
+    } = req.body;
+
+    // Combine important fields
+    const embeddingText = `
+      ${name}
+      ${description}
+      ${category}
+      ${price}
+    `.trim();
+
+
+    // Generate embedding ONCE
+    const embedding = await hf.featureExtraction({
+      model: "sentence-transformers/all-MiniLM-L6-v2",
+      inputs: embeddingText,
+    });
+    // console.log("Generated embedding:", embedding);
+
+     // Save product + embedding while updating as well
+     const updatedData = {
+      ...req.body,
+      embedding: Array.from(embedding),
+    };
     const product = await Product.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      updatedData,
       {
         new: true,
         runValidators: true,
@@ -111,7 +174,7 @@ const deleteProduct = async (req, res) => {
       });
     }
 
-    await product.remove();
+    await product.deleteOne();
 
     res.status(200).json({
       success: true,
@@ -125,7 +188,7 @@ const deleteProduct = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   getProducts,
   getProduct,
   createProduct,

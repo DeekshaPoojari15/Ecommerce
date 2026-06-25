@@ -1,5 +1,7 @@
-const jwt = require('jsonwebtoken');
-const env = require('../config/env');
+// const jwt = require('jsonwebtoken');
+// const env = require('../config/env');
+import jwt from 'jsonwebtoken';
+import env from '../config/env.js';
 
 const authMiddleware = (req, res, next) => {
   // Checks if user has valid JWT token before allowing access to protected routes.
@@ -18,4 +20,4 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-module.exports = authMiddleware;
+export default authMiddleware;

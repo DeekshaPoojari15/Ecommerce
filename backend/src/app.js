@@ -1,6 +1,11 @@
-const express = require('express');
-const cors = require('cors');
-const env = require('./config/env');
+import express from "express";
+import cors from "cors";
+import env from "./config/env.js";
+import authRoutes from './routes/auth.routes.js';
+import cartRoutes from './routes/cart.routes.js';
+import productsRoutes from './routes/products.routes.js';
+import ordersRoutes from './routes/orders.routes.js';
+import chatRoutes from './routes/chat.routes.js';
 
 const app = express();
 
@@ -21,12 +26,11 @@ app.get('/api/health', (req, res) => {
 });
 
 // Routes
-app.use('/api/auth', require('./routes/auth.routes'));
-app.use('/api/products', require('./routes/products.routes'));
-app.use('/api/orders', require('./routes/orders.routes'));
-app.use('/api/cart', require('./routes/cart.routes'));
-// app.use('/api/recommendations', require('./routes/recommendations.routes'));
-// app.use('/api/chat', require('./routes/chat.routes'));
+app.use('/api/auth', authRoutes);
+app.use('/api/products', productsRoutes);
+app.use('/api/orders', ordersRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/chat', chatRoutes);
 // app.use('/api/users', require('./routes/users.routes'));
 
 // Error handling middleware
@@ -43,4 +47,4 @@ app.use((req, res) => {
   res.status(404).json({ success: false, message: 'Route not found' });
 });
 
-module.exports = app;
+export default app;

@@ -1,6 +1,9 @@
-const User = require('../models/User.model');
-const jwt = require('jsonwebtoken');
-const env = require('../config/env');
+// const User = require('../models/User.model');
+// const jwt = require('jsonwebtoken');
+// const env = require('../config/env');
+import User from '../models/User.model.js';
+import jwt from 'jsonwebtoken';
+import env from '../config/env.js';
 
 // Generate JWT token
 const generateToken = (id) => {
@@ -12,7 +15,7 @@ const generateToken = (id) => {
 // @desc    Register user
 // @route   POST /api/auth/register
 // @access  Public
-const register = async (req, res) => {
+export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
@@ -58,7 +61,7 @@ const register = async (req, res) => {
 // @desc    Login user
 // @route   POST /api/auth/login
 // @access  Public
-const login = async (req, res) => {
+export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -106,7 +109,7 @@ const login = async (req, res) => {
 // @desc    Get current logged in user
 // @route   GET /api/auth/me
 // @access  Private
-const getMe = async (req, res) => {
+export const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
 
@@ -120,10 +123,4 @@ const getMe = async (req, res) => {
       message: error.message,
     });
   }
-};
-
-module.exports = {
-  register,
-  login,
-  getMe,
 };

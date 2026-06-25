@@ -1,6 +1,9 @@
-const app = require('./app'); // Import Express app setup
-const connectDB = require('./config/db');  // Import MongoDB connection
-const env = require('./config/env');// Import configuration
+// const app = require('./app'); // Import Express app setup
+// const connectDB = require('./config/db');  // Import MongoDB connection
+// const env = require('./config/env');// Import configuration
+import app from "./app.js";
+import connectDB from "./config/db.js";
+import env from "./config/env.js";  
 
 // Connect to MongoDB
 connectDB();
@@ -18,4 +21,4 @@ process.on('unhandledRejection', (err) => {
   server.close(() => process.exit(1));
 });
 
-module.exports = server;
+export default server;

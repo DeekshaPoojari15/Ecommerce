@@ -1,25 +1,33 @@
-const express = require('express');
-const {
-  getOrders,
+// const express = require('express');
+// const {
+//   getOrders,
+//   getOrder,
+//   getMyOrders,
+//   createOrder,
+//   updateOrderStatus,
+// } = require('../controllers/orders.controller');
+// const authMiddleware = require('../middlewares/auth.middleware');
+
+import express from "express";
+import { getOrders,
   getOrder,
   getMyOrders,
   createOrder,
-  updateOrderStatus,
-} = require('../controllers/orders.controller');
-const authMiddleware = require('../middlewares/auth.middleware');
+  updateOrderStatus,} from "../controllers/orders.controller.js";
+import authMiddleware from "../middlewares/auth.middleware.js";
 
-const router = express.Router();
+const ordersRoutes = express.Router();
 
 // All routes require authentication
-router.use(authMiddleware);
+ordersRoutes.use(authMiddleware);
 
 // User routes
-router.get('/myorders', getMyOrders);
-router.post('/', createOrder);
-router.get('/:id', getOrder);
+ordersRoutes.get('/myorders', getMyOrders);
+ordersRoutes.post('/', createOrder);
+ordersRoutes.get('/:id', getOrder);
 
 // Admin routes
-router.get('/', getOrders);
-router.put('/:id', updateOrderStatus);
+ordersRoutes.get('/', getOrders);
+ordersRoutes.put('/:id', updateOrderStatus);
 
-module.exports = router;
+export default ordersRoutes;

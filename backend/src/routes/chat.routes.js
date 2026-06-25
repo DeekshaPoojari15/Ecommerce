@@ -1,18 +1,34 @@
-const express = require('express');
-const {
-  sendMessage,
-  getChatHistory,
-  clearChatHistory,
-} = require('../controllers/chat.controller');
-const authMiddleware = require('../middlewares/auth.middleware');
+// const express = require('express');
+// const {
+//   sendMessage,
+//   getChatHistory,
+//   clearChatHistory,
+// } = require('../controllers/chat.controller');
+// const authMiddleware = require('../middlewares/auth.middleware');
 
-const router = express.Router();
+// import authMiddleware from "../middlewares/auth.middleware.js";
+
+// const router = express.Router();
+
+// // All routes require authentication
+// router.use(authMiddleware);
+
+// router.post('/', sendMessage);
+// router.get('/history', getChatHistory);
+// router.delete('/history', clearChatHistory);
+
+// module.exports = router;
+
+
+import express from "express";
+import { chatbot } from "../controllers/chat.controller.js";
+import authMiddleware from "../middlewares/auth.middleware.js";
+
+const chatRoutes = express.Router();
 
 // All routes require authentication
-router.use(authMiddleware);
+chatRoutes.use(authMiddleware);
 
-router.post('/', sendMessage);
-router.get('/history', getChatHistory);
-router.delete('/history', clearChatHistory);
+chatRoutes.post("/", chatbot);
 
-module.exports = router;
+export default chatRoutes;

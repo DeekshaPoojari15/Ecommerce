@@ -1,4 +1,5 @@
-const mongoose = require("mongoose");
+// const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const specificationSchema = new mongoose.Schema(
   {},
@@ -15,20 +16,20 @@ const productSchema = new mongoose.Schema(
 
     sku: {
       type: String,
-      required: [true, "Please provide product SKU"],
+      // required: [true, "Please provide product SKU"],
       unique: true,
       trim: true,
     },
 
     description: {
       type: String,
-      required: [true, "Please provide product description"],
+      // required: [true, "Please provide product description"],
       trim: true,
     },
 
     longDescription: {
       type: String,
-      required: [true, "Please provide long description"],
+      // required: [true, "Please provide long description"],
     },
 
     price: {
@@ -63,13 +64,13 @@ const productSchema = new mongoose.Schema(
     images: [
       {
         type: String,
-        required: true,
+        // required: true,
       },
     ],
 
     stock: {
       type: Number,
-      required: [true, "Please provide stock quantity"],
+      // required: [true, "Please provide stock quantity"],
       min: 0,
       default: 0,
     },
@@ -108,10 +109,15 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+
+     embedding: {
+      type: [Number],
+      default: [],
+    },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
-module.exports = mongoose.model("Product", productSchema);
+export default mongoose.model("Product", productSchema);
